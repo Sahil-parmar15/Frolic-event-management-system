@@ -1,0 +1,48 @@
+/* Custom Variables */
+:root {
+    --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    --frolic-purple: #6a11cb;
+}
+
+/* Page Background */
+.login-page-bg {
+    background: var(--primary-gradient);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Customizing the Card */
+.login-card {
+    border: none;
+    border-radius: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* Logo Styling */
+.frolic-logo {
+    color: var(--frolic-purple);
+    letter-spacing: 2px;
+}
+
+/* Input Overrides */
+.form-control:focus {
+    border-color: var(--frolic-purple);
+    box-shadow: 0 0 0 0.25 margin-bottom rgba(106, 17, 203, 0.25);
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    color: var(--frolic-purple);
+}
+
+/* Button Customization */
+.btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}

@@ -1,0 +1,22 @@
+.user-avatar-sm {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.contact-info i {
+    width: 20px;
+    color: #6a11cb;
+}
+
+.filter-section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+.smaller {
+    font-size: 0.75rem;
+}

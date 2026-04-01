@@ -1,0 +1,27 @@
+:root {
+    --bg-soft-success: #dcfce7;
+    --text-success: #15803d;
+}
+
+.bg-soft-success { background-color: var(--bg-soft-success); color: var(--text-success); }
+
+.btn-icon {
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-soft-warning { background: #fef3c7; color: #b45309; }
+.btn-soft-danger { background: #fee2e2; color: #b91c1c; }
+.btn-soft-warning:hover { background: #fde68a; }
+.btn-soft-danger:hover { background: #fecaca; }
+
+.form-select:focus, .form-control:focus {
+    box-shadow: none;
+    background-color: #eef2f7 !important;
+}
