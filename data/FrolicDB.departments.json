@@ -1,0 +1,24 @@
+[{
+  "_id": {
+    "$oid": "69997ed07e321526d5734200"
+  },
+  "DepartmentName": "Computer",
+  "DepartmentImage": null,
+  "DepartmentDescription": null,
+  "InstituteID": {
+    "$oid": "69997bc048d67265c9bb50d9"
+  },
+  "DepartmentCoOrdinatorID": {
+    "$oid": "69627eb77753ef23ea1c6ac1"
+  },
+  "ModifiedBy": {
+    "$oid": "6999755b908f5f4be7f71d9e"
+  },
+  "createdAt": {
+    "$date": "2026-02-21T09:45:52.267Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-21T09:45:52.267Z"
+  },
+  "__v": 0
+}]

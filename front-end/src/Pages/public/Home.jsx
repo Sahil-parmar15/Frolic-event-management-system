@@ -16,17 +16,16 @@ function Home() {
     try {
       setLoading(true);
       // Fetch stats and latest 3 events in parallel
-      const [eventRes, partRes, instRes, latestEventsRes] = await Promise.all([
+      const [eventRes, instRes, latestEventsRes] = await Promise.all([
         API.get("/events?limit=1"),
-        API.get("/participants?limit=1"),
         API.get("/institutes?limit=1"),
         API.get("/events?limit=3")
       ]);
 
       setStats({
-        events: eventRes.data.pagination?.total || eventRes.data.count || 0,
-        participants: partRes.data.pagination?.total || partRes.data.count || 0,
-        institutes: instRes.data.pagination?.total || instRes.data.count || 0,
+        events: eventRes.data.total || eventRes.data.pagination?.total || eventRes.data.count || 0,
+        participants: 0, // participants are behind auth
+        institutes: instRes.data.total || instRes.data.pagination?.total || instRes.data.count || 0,
       });
 
       setFeaturedEvents(latestEventsRes.data.data || []);

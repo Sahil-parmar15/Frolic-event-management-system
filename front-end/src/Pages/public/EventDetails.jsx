@@ -121,7 +121,7 @@ function EventDetails() {
               </div>
               <div className="text-end text-start-md">
                 <div className="fw-bold fs-5"><i className="fas fa-user-tie me-2"></i>{event.EventMainStudentCoOrdinatorName || "TBA"}</div>
-                <div className="text-muted">{event.EventMainStudentCoOrdinatorContact || "Contact Info Unavailable"}</div>
+                <div className="text-muted">{event.EventMainStudentCoOrdinatorPhone || "Contact Info Unavailable"}</div>
               </div>
             </div>
           </div>

@@ -1,6 +1,8 @@
 const Events = require('../models/Event');
 const Departments = require('../models/Department');
 const Groups = require('../models/Group');
+const path = require('path');
+const fs = require('fs');
 
 exports.getEvents = async (req, res, next) => {
     try {
@@ -15,20 +17,18 @@ exports.getEvents = async (req, res, next) => {
         if (req.query.departmentId) {
             query.DepartmentID = req.query.departmentId;
         }
-        if (req.query.status) {
-            query.Status = req.query.status;
-        }
 
         const total = await Events.countDocuments(query);
         const events = await Events.find(query)
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone')
-            .populate('ModifiedBy', 'name email')
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .limit(limit)
             .skip(startIndex)
             .sort({ createdAt: -1 });
 
         const pagination = {};
+        const totalPages = Math.ceil(total / limit);
         const endIndex = page * limit;
         if (endIndex < total) {
             pagination.next = { page: page + 1, limit };
@@ -36,10 +36,13 @@ exports.getEvents = async (req, res, next) => {
         if (startIndex > 0) {
             pagination.prev = { page: page - 1, limit };
         }
+        pagination.pages = totalPages;
+        pagination.page = page;
 
         res.status(200).json({
             success: true,
             count: events.length,
+            total,
             pagination,
             data: events
         });
@@ -52,8 +55,8 @@ exports.getEvent = async (req, res, next) => {
     try {
         const event = await Events.findById(req.params.id)
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone')
-            .populate('ModifiedBy', 'name email');
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber')
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         if (!event) {
             return res.status(404).json({
@@ -73,19 +76,48 @@ exports.getEvent = async (req, res, next) => {
 
 exports.createEvent = async (req, res, next) => {
     try {
-        const { EventName, DepartmentID, EventDate, EventTime, MinParticipants, MaxParticipants } = req.body;
+        const {
+            EventName,
+            DepartmentID,
+            EventCoOrdinatorID,
+            GroupMinParticipants,
+            GroupMaxParticipants,
+            EventFees,
+            MaxGroupsAllowed
+        } = req.body;
 
-        if (!EventName || !DepartmentID || !EventDate || !EventTime) {
+        if (!EventName || !DepartmentID || !EventCoOrdinatorID) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide EventName, DepartmentID, EventDate, and EventTime'
+                message: 'Please provide EventName, DepartmentID, and EventCoOrdinatorID'
             });
         }
 
-        if (MinParticipants && MaxParticipants && MinParticipants > MaxParticipants) {
+        if (!EventFees && EventFees !== 0) {
             return res.status(400).json({
                 success: false,
-                message: 'MinParticipants cannot be greater than MaxParticipants'
+                message: 'Please provide EventFees'
+            });
+        }
+
+        if (!GroupMinParticipants || !GroupMaxParticipants) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide GroupMinParticipants and GroupMaxParticipants'
+            });
+        }
+
+        if (!MaxGroupsAllowed) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide MaxGroupsAllowed'
+            });
+        }
+
+        if (parseInt(GroupMinParticipants) > parseInt(GroupMaxParticipants)) {
+            return res.status(400).json({
+                success: false,
+                message: 'GroupMinParticipants cannot be greater than GroupMaxParticipants'
             });
         }
 
@@ -109,13 +141,18 @@ exports.createEvent = async (req, res, next) => {
             });
         }
 
+        // Handle file upload
+        if (req.file) {
+            req.body.EventImage = req.file.path;
+        }
+
         req.body.ModifiedBy = req.user._id;
         const event = await Events.create(req.body);
 
         const populatedEvent = await Events.findById(event._id)
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone')
-            .populate('ModifiedBy', 'name email');
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber')
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(201).json({
             success: true,
@@ -138,27 +175,15 @@ exports.updateEvent = async (req, res, next) => {
             });
         }
 
-        if (req.body.MinParticipants !== undefined && req.body.MaxParticipants !== undefined) {
-            if (req.body.MinParticipants > req.body.MaxParticipants) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'MinParticipants cannot be greater than MaxParticipants'
-                });
-            }
-        } else if (req.body.MinParticipants !== undefined) {
-            if (req.body.MinParticipants > (event.MaxParticipants || req.body.MaxParticipants || 0)) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'MinParticipants cannot be greater than MaxParticipants'
-                });
-            }
-        } else if (req.body.MaxParticipants !== undefined) {
-            if ((event.MinParticipants || req.body.MinParticipants || 0) > req.body.MaxParticipants) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'MinParticipants cannot be greater than MaxParticipants'
-                });
-            }
+        // Validate participants
+        const newMin = req.body.GroupMinParticipants !== undefined ? parseInt(req.body.GroupMinParticipants) : event.GroupMinParticipants;
+        const newMax = req.body.GroupMaxParticipants !== undefined ? parseInt(req.body.GroupMaxParticipants) : event.GroupMaxParticipants;
+
+        if (newMin > newMax) {
+            return res.status(400).json({
+                success: false,
+                message: 'GroupMinParticipants cannot be greater than GroupMaxParticipants'
+            });
         }
 
         if (req.body.EventName && req.body.EventName !== event.EventName) {
@@ -176,14 +201,26 @@ exports.updateEvent = async (req, res, next) => {
             }
         }
 
+        // Handle file upload
+        if (req.file) {
+            // Delete old image if it exists
+            if (event.EventImage) {
+                const oldPath = path.join(__dirname, '..', event.EventImage);
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+            req.body.EventImage = req.file.path;
+        }
+
         req.body.ModifiedBy = req.user._id;
         event = await Events.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
         })
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone')
-            .populate('ModifiedBy', 'name email');
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber')
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(200).json({
             success: true,
@@ -199,7 +236,7 @@ exports.deleteEvent = async (req, res, next) => {
     try {
         const event = await Events.findById(req.params.id)
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone');
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber');
 
         if (!event) {
             return res.status(404).json({
@@ -233,8 +270,8 @@ exports.getEventsByDepartment = async (req, res, next) => {
     try {
         const events = await Events.find({ DepartmentID: req.params.id })
             .populate('DepartmentID', 'DepartmentName InstituteID')
-            .populate('EventCoOrdinatorID', 'name email phone')
-            .populate('ModifiedBy', 'name email')
+            .populate('EventCoOrdinatorID', 'UserName EmailAddress PhoneNumber')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .sort({ createdAt: -1 });
 
         res.status(200).json({

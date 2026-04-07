@@ -50,7 +50,7 @@ function Events() {
       
       const userRes = await API.get("/users");
       if (userRes.data.success) {
-        setCoordinators(userRes.data.data.filter(u => !u.IsAdmin));
+        setCoordinators(userRes.data.data);
       }
     } catch (error) {
       console.error("Error fetching dropdown data:", error);
@@ -64,7 +64,7 @@ function Events() {
       if (res.data.success) {
         setEvents(res.data.data);
         setTotalPages(res.data.pagination?.pages || 1);
-        setCurrentPage(res.data.pagination?.page || 1);
+        setCurrentPage(page);
       }
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -323,6 +323,7 @@ function Events() {
                   </li>
                 ))}
 
+
                 <li
                   className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}
                 >
@@ -385,7 +386,7 @@ function Events() {
                       <select className="form-select" name="EventCoOrdinatorID" value={editFormData.EventCoOrdinatorID} onChange={handleInputChange} required>
                         <option value="">-- Choose Coordinator --</option>
                         {coordinators.map((user) => (
-                          <option key={user._id} value={user._id}>{user.UserName}</option>
+                          <option key={user._id} value={user._id}>{user.UserName || user.name}</option>
                         ))}
                       </select>
                     </div>
