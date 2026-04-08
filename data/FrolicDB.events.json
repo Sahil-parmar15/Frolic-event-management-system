@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "69997eec7e321526d5734208"
+  },
+  "EventName": "Code Sprint",
+  "EventTagline": null,
+  "EventImage": null,
+  "EventDescription": null,
+  "GroupMinParticipants": 2,
+  "GroupMaxParticipants": 4,
+  "EventFees": 100,
+  "EventFirstPrice": null,
+  "EventSecondPrice": null,
+  "EventThirdPrice": null,
+  "DepartmentID": {
+    "$oid": "69997ed07e321526d5734200"
+  },
+  "EventCoOrdinatorID": {
+    "$oid": "69627eb77753ef23ea1c6ac1"
+  },
+  "EventMainStudentCoOrdinatorName": null,
+  "EventMainStudentCoOrdinatorPhone": null,
+  "EventMainStudentCoOrdinatorEmail": null,
+  "EventLocation": "Hall A",
+  "MaxGroupsAllowed": 10,
+  "ModifiedBy": {
+    "$oid": "6999755b908f5f4be7f71d9e"
+  },
+  "createdAt": {
+    "$date": "2026-02-21T09:46:20.284Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-21T09:46:20.284Z"
+  },
+  "__v": 0
+}]

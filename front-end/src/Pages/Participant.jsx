@@ -55,7 +55,7 @@ function Participants() {
       if (res.data.success) {
         setParticipants(res.data.data);
         setTotalPages(res.data.pagination?.pages || 1);
-        setCurrentPage(res.data.pagination?.page || 1);
+        setCurrentPage(res.data.pagination?.page || page);
       }
     } catch (error) {
       console.error("Error fetching participants:", error);

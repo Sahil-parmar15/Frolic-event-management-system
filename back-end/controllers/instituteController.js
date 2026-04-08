@@ -106,7 +106,7 @@ exports.updateInstitute = async (req, res, next) => {
         }
 
         if (req.file) {
-            req.body.InsituteImage = `uploads/${req.file.filename}`;
+            req.body.InsituteImage = req.file.path;
         }
 
         req.body.ModifiedBy = req.user._id;

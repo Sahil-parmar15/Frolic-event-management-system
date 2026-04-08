@@ -16,18 +16,19 @@ exports.getWinners = async (req, res, next) => {
             query.GroupID = req.query.groupId;
         }
         if (req.query.position) {
-            query.Position = req.query.position;
+            query.Sequence = req.query.position;
         }
 
         const total = await EventWiseWinners.countDocuments(query);
         const winners = await EventWiseWinners.find(query)
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .limit(limit)
             .skip(startIndex)
-            .sort({ EventID: 1, Position: 1 });
+            .sort({ EventID: 1, Sequence: 1 });
 
+        const totalPages = Math.ceil(total / limit);
         const pagination = {};
         const endIndex = page * limit;
         if (endIndex < total) {
@@ -36,10 +37,13 @@ exports.getWinners = async (req, res, next) => {
         if (startIndex > 0) {
             pagination.prev = { page: page - 1, limit };
         }
+        pagination.pages = totalPages;
+        pagination.page = page;
 
         res.status(200).json({
             success: true,
             count: winners.length,
+            total,
             pagination,
             data: winners
         });
@@ -53,7 +57,7 @@ exports.getWinner = async (req, res, next) => {
         const winner = await EventWiseWinners.findById(req.params.id)
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         if (!winner) {
             return res.status(404).json({
@@ -73,19 +77,20 @@ exports.getWinner = async (req, res, next) => {
 
 exports.createWinner = async (req, res, next) => {
     try {
-        const { EventID, GroupID, Position, PrizeAmount, Remarks } = req.body;
+        const { EventID, GroupID, Sequence, PrizeAmount, Remarks } = req.body;
 
-        if (!EventID || !GroupID || !Position) {
+        if (!EventID || !GroupID || !Sequence) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide EventID, GroupID, and Position'
+                message: 'Please provide EventID, GroupID, and Sequence'
             });
         }
 
-        if (!Number.isInteger(Position) || Position < 1) {
+        const positionNum = parseInt(Sequence);
+        if (!positionNum || positionNum < 1) {
             return res.status(400).json({
                 success: false,
-                message: 'Position must be a positive integer'
+                message: 'Sequence must be a positive integer'
             });
         }
 
@@ -114,13 +119,13 @@ exports.createWinner = async (req, res, next) => {
 
         const existingWinner = await EventWiseWinners.findOne({
             EventID: req.body.EventID,
-            Position: req.body.Position
+            Sequence: req.body.Sequence
         });
 
         if (existingWinner) {
             return res.status(400).json({
                 success: false,
-                message: `Position ${req.body.Position} already exists for this event`
+                message: `Sequence ${req.body.Sequence} already exists for this event`
             });
         }
 
@@ -142,7 +147,7 @@ exports.createWinner = async (req, res, next) => {
         const populatedWinner = await EventWiseWinners.findById(winner._id)
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(201).json({
             success: true,
@@ -165,25 +170,25 @@ exports.updateWinner = async (req, res, next) => {
             });
         }
 
-        if (req.body.Position !== undefined) {
-            if (!Number.isInteger(req.body.Position) || req.body.Position < 1) {
+        if (req.body.Sequence !== undefined) {
+            if (!Number.isInteger(req.body.Sequence) || req.body.Sequence < 1) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Position must be a positive integer'
+                    message: 'Sequence must be a positive integer'
                 });
             }
 
-            if (req.body.Position !== winner.Position) {
+            if (req.body.Sequence !== winner.Sequence) {
                 const existingWinner = await EventWiseWinners.findOne({
                     EventID: winner.EventID,
-                    Position: req.body.Position,
+                    Sequence: req.body.Sequence,
                     _id: { $ne: req.params.id }
                 });
 
                 if (existingWinner) {
                     return res.status(400).json({
                         success: false,
-                        message: `Position ${req.body.Position} already exists for this event`
+                        message: `Sequence ${req.body.Sequence} already exists for this event`
                     });
                 }
             }
@@ -226,7 +231,7 @@ exports.updateWinner = async (req, res, next) => {
         })
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(200).json({
             success: true,
@@ -269,8 +274,8 @@ exports.getWinnersByEvent = async (req, res, next) => {
         const winners = await EventWiseWinners.find({ EventID: req.params.id })
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email')
-            .sort({ Position: 1 });
+            .populate('ModifiedBy', 'UserName EmailAddress')
+            .sort({ Sequence: 1 });
 
         res.status(200).json({
             success: true,
@@ -287,8 +292,8 @@ exports.getWinnersByGroup = async (req, res, next) => {
         const winners = await EventWiseWinners.find({ GroupID: req.params.id })
             .populate('EventID', 'EventName DepartmentID EventDate')
             .populate('GroupID', 'GroupName EventID')
-            .populate('ModifiedBy', 'name email')
-            .sort({ Position: 1 });
+            .populate('ModifiedBy', 'UserName EmailAddress')
+            .sort({ Sequence: 1 });
 
         res.status(200).json({
             success: true,

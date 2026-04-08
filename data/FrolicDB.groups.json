@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "69998aea1077c485f6c6448d"
+  },
+  "GroupName": "Team Alpha",
+  "EventID": {
+    "$oid": "69997eec7e321526d5734208"
+  },
+  "IsPaymentDone": false,
+  "IsPresent": false,
+  "ModifiedBy": {
+    "$oid": "6999755b908f5f4be7f71d9e"
+  },
+  "createdAt": {
+    "$date": "2026-02-21T10:37:30.883Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-21T10:37:30.883Z"
+  },
+  "__v": 0
+}]

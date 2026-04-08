@@ -1,0 +1,34 @@
+[{
+  "_id": {
+    "$oid": "69998ecd9576e376726a2b0a"
+  },
+  "UserName": "Admin User",
+  "UserPassword": "$2a$10$m.yOjUO.5OvdsL7NmVppautkO2qVIMfIirzulTQVpB1wsJ.brvqXG",
+  "EmailAddress": "admin@frolic.com",
+  "PhoneNumber": "9999999999",
+  "IsAdmin": true,
+  "createdAt": {
+    "$date": "2026-02-21T10:54:05.925Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-21T10:54:05.925Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69c4089ba0d266812c62ad29"
+  },
+  "UserName": "Jaival Mehta",
+  "UserPassword": "$2b$10$adVRE71WuNXEFGVzKT85pO3LJHL1mblgYwP4oZl4rQfjx20I9Dssm",
+  "EmailAddress": "jaival@456.com",
+  "PhoneNumber": "9998979495",
+  "IsAdmin": false,
+  "createdAt": {
+    "$date": "2026-03-25T16:08:59.454Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-25T16:08:59.454Z"
+  },
+  "__v": 0
+}]

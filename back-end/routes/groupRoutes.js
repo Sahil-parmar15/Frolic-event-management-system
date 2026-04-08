@@ -10,20 +10,20 @@ const {
 } = require('../controllers/groupController');
 const { protect } = require('../middleware/auth');
 
+// Public routes (no authentication required)
+router.post('/public/create', createGroup);
+
+// Protected routes (authentication required)
+router.use(protect);
+
 router.route('/')
-    .get(getGroups);
+    .get(getGroups)
+    .post(createGroup);
 
 router.get('/event/:id', getGroupsByEvent);
 
 router.route('/:id')
-    .get(getGroup);
-
-router.use(protect);
-
-router.route('/')
-    .post(createGroup);
-
-router.route('/:id')
+    .get(getGroup)
     .patch(updateGroup)
     .delete(deleteGroup);
 

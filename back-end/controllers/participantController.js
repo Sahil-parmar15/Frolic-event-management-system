@@ -12,7 +12,7 @@ exports.getParticipants = async (req, res, next) => {
         if (req.query.search) {
             query.$or = [
                 { ParticipantName: { $regex: req.query.search, $options: 'i' } },
-                { Email: { $regex: req.query.search, $options: 'i' } }
+                { ParticipantEmail: { $regex: req.query.search, $options: 'i' } }
             ];
         }
         if (req.query.groupId) {
@@ -25,12 +25,12 @@ exports.getParticipants = async (req, res, next) => {
         const total = await Participants.countDocuments(query);
         const participants = await Participants.find(query)
             .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .limit(limit)
             .skip(startIndex)
             .sort({ createdAt: -1 });
 
+        const totalPages = Math.ceil(total / limit);
         const pagination = {};
         const endIndex = page * limit;
         if (endIndex < total) {
@@ -39,10 +39,13 @@ exports.getParticipants = async (req, res, next) => {
         if (startIndex > 0) {
             pagination.prev = { page: page - 1, limit };
         }
+        pagination.pages = totalPages;
+        pagination.page = page;
 
         res.status(200).json({
             success: true,
             count: participants.length,
+            total,
             pagination,
             data: participants
         });
@@ -55,8 +58,7 @@ exports.getParticipant = async (req, res, next) => {
     try {
         const participant = await Participants.findById(req.params.id)
             .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID MinParticipants MaxParticipants')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         if (!participant) {
             return res.status(404).json({
@@ -76,12 +78,29 @@ exports.getParticipant = async (req, res, next) => {
 
 exports.createParticipant = async (req, res, next) => {
     try {
-        const { ParticipantName, Email, Phone, GroupID, EventID } = req.body;
+        const {
+            ParticipantName,
+            ParticipantEmail,
+            ParticipantContactNo,
+            ParticipantEnrollmentNo,
+            ParticipantInsituteName,
+            ParticipantDepartmentName,
+            ParticipantSemester,
+            IsGroupLeader,
+            GroupID,
+            // Also accept already-mapped names from admin form
+            ParticipantMobile,
+            ParticipantEnrollmentNumber
+        } = req.body;
 
-        if (!ParticipantName || !Email || !Phone || !GroupID || !EventID) {
+        // Support both frontend field names (public form) and admin form names
+        const mobile = ParticipantContactNo || ParticipantMobile;
+        const enrollment = ParticipantEnrollmentNo || ParticipantEnrollmentNumber;
+
+        if (!ParticipantName || !ParticipantEmail || !mobile || !enrollment || !ParticipantInsituteName || !GroupID) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide ParticipantName, Email, Phone, GroupID, and EventID'
+                message: 'Please provide all required participant details (Name, Email, Contact, Enrollment, Institute, Group)'
             });
         }
 
@@ -93,7 +112,7 @@ exports.createParticipant = async (req, res, next) => {
             });
         }
 
-        const event = await Events.findById(EventID);
+        const event = await Events.findById(group.EventID);
         if (!event) {
             return res.status(404).json({
                 success: false,
@@ -101,40 +120,42 @@ exports.createParticipant = async (req, res, next) => {
             });
         }
 
-        if (group.EventID.toString() !== EventID) {
-            return res.status(400).json({
-                success: false,
-                message: 'Group does not belong to the specified event'
-            });
-        }
-
         const existingParticipant = await Participants.findOne({
-            Email: req.body.Email,
-            EventID: req.body.EventID
+            ParticipantEmail: ParticipantEmail,
+            GroupID: GroupID
         });
 
         if (existingParticipant) {
             return res.status(400).json({
                 success: false,
-                message: 'Participant with this email already exists in this event'
+                message: 'Participant with this email already exists in this group'
             });
         }
 
         const groupParticipants = await Participants.countDocuments({ GroupID });
-        if (event.MaxParticipants && groupParticipants >= event.MaxParticipants) {
+        if (event.GroupMaxParticipants && groupParticipants >= event.GroupMaxParticipants) {
             return res.status(400).json({
                 success: false,
-                message: `Group has reached maximum participants limit (${event.MaxParticipants})`
+                message: `Group has reached maximum participants limit (${event.GroupMaxParticipants})`
             });
         }
 
-        req.body.ModifiedBy = req.user._id;
-        const participant = await Participants.create(req.body);
+        // Build participant data with mapped field names
+        const participantData = {
+            ParticipantName,
+            ParticipantEmail,
+            ParticipantMobile: mobile,
+            ParticipantEnrollmentNumber: enrollment,
+            ParticipantInsituteName,
+            IsGroupLeader: IsGroupLeader || false,
+            GroupID,
+            ModifiedBy: req.user ? req.user._id : null
+        };
+
+        const participant = await Participants.create(participantData);
 
         const populatedParticipant = await Participants.findById(participant._id)
-            .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID')
-            .populate('ModifiedBy', 'name email');
+            .populate('GroupID', 'GroupName');
 
         res.status(201).json({
             success: true,
@@ -157,17 +178,17 @@ exports.updateParticipant = async (req, res, next) => {
             });
         }
 
-        if (req.body.Email && req.body.Email !== participant.Email) {
+        if (req.body.ParticipantEmail && req.body.ParticipantEmail !== participant.ParticipantEmail) {
             const existingParticipant = await Participants.findOne({
-                Email: req.body.Email,
-                EventID: participant.EventID,
+                ParticipantEmail: req.body.ParticipantEmail,
+                GroupID: participant.GroupID,
                 _id: { $ne: req.params.id }
             });
 
             if (existingParticipant) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Participant with this email already exists in this event'
+                    message: 'Participant with this email already exists in this group'
                 });
             }
         }
@@ -181,22 +202,15 @@ exports.updateParticipant = async (req, res, next) => {
                 });
             }
 
-            if (newGroup.EventID.toString() !== participant.EventID.toString()) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Cannot move participant to a group from a different event'
-                });
-            }
-
-            const event = await Events.findById(participant.EventID);
-            const newGroupParticipants = await Participants.countDocuments({ 
-                GroupID: req.body.GroupID 
+            const event = await Events.findById(newGroup.EventID);
+            const newGroupParticipants = await Participants.countDocuments({
+                GroupID: req.body.GroupID
             });
-            
-            if (event.MaxParticipants && newGroupParticipants >= event.MaxParticipants) {
+
+            if (event && event.GroupMaxParticipants && newGroupParticipants >= event.GroupMaxParticipants) {
                 return res.status(400).json({
                     success: false,
-                    message: `Target group has reached maximum participants limit (${event.MaxParticipants})`
+                    message: `Target group has reached maximum participants limit (${event.GroupMaxParticipants})`
                 });
             }
         }
@@ -207,8 +221,7 @@ exports.updateParticipant = async (req, res, next) => {
             runValidators: true
         })
             .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(200).json({
             success: true,
@@ -223,8 +236,7 @@ exports.updateParticipant = async (req, res, next) => {
 exports.deleteParticipant = async (req, res, next) => {
     try {
         const participant = await Participants.findById(req.params.id)
-            .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID MinParticipants');
+            .populate('GroupID', 'GroupName EventID');
 
         if (!participant) {
             return res.status(404).json({
@@ -233,15 +245,18 @@ exports.deleteParticipant = async (req, res, next) => {
             });
         }
 
-        const event = await Events.findById(participant.EventID);
-        const groupParticipants = await Participants.countDocuments({ 
-            GroupID: participant.GroupID 
+        const event = participant.GroupID?.EventID
+            ? await Events.findById(participant.GroupID.EventID)
+            : null;
+
+        const groupParticipants = await Participants.countDocuments({
+            GroupID: participant.GroupID
         });
 
-        if (event.MinParticipants && groupParticipants <= event.MinParticipants) {
+        if (event && event.GroupMinParticipants && groupParticipants <= event.GroupMinParticipants) {
             return res.status(400).json({
                 success: false,
-                message: `Cannot delete participant. Group must have at least ${event.MinParticipants} participants`
+                message: `Cannot delete participant. Group must have at least ${event.GroupMinParticipants} participants`
             });
         }
 
@@ -262,8 +277,7 @@ exports.getParticipantsByGroup = async (req, res, next) => {
     try {
         const participants = await Participants.find({ GroupID: req.params.id })
             .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .sort({ createdAt: -1 });
 
         res.status(200).json({
@@ -280,8 +294,7 @@ exports.getParticipantsByEvent = async (req, res, next) => {
     try {
         const participants = await Participants.find({ EventID: req.params.id })
             .populate('GroupID', 'GroupName EventID')
-            .populate('EventID', 'EventName DepartmentID')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .sort({ createdAt: -1 });
 
         res.status(200).json({

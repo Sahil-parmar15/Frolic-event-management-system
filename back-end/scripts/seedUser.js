@@ -1,17 +1,20 @@
-require('../.env').config(); // 1. Load variables first
-const connectDB = require('../config/db'); // 2. Import connection directly
+require('dotenv').config();
+const connectDB = require('../config/db');
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 async function createUser() {
     try {
-        await connectDB(); // 3. Connect to DB without starting the Express server
+        await connectDB();
+
+        const hashedPassword = await bcrypt.hash('admin123', 10);
 
         const testUser = new User({
-            name: "Test Admin",
-            email: "test@frolic.com",
-            phone: "1234567890",
-            password: "hashed_password_example", 
-            role: "Admin"
+            UserName: "admin",
+            UserPassword: hashedPassword,
+            EmailAddress: "admin@frolic.com",
+            PhoneNumber: "1234567890",
+            IsAdmin: true
         });
 
         await testUser.save();

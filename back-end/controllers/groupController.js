@@ -19,11 +19,12 @@ exports.getGroups = async (req, res, next) => {
         const total = await Groups.countDocuments(query);
         const groups = await Groups.find(query)
             .populate('EventID', 'EventName DepartmentID EventDate EventTime')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .limit(limit)
             .skip(startIndex)
             .sort({ createdAt: -1 });
 
+        const totalPages = Math.ceil(total / limit);
         const pagination = {};
         const endIndex = page * limit;
         if (endIndex < total) {
@@ -32,10 +33,13 @@ exports.getGroups = async (req, res, next) => {
         if (startIndex > 0) {
             pagination.prev = { page: page - 1, limit };
         }
+        pagination.pages = totalPages;
+        pagination.page = page;
 
         res.status(200).json({
             success: true,
             count: groups.length,
+            total,
             pagination,
             data: groups
         });
@@ -48,7 +52,7 @@ exports.getGroup = async (req, res, next) => {
     try {
         const group = await Groups.findById(req.params.id)
             .populate('EventID', 'EventName DepartmentID EventDate EventTime MinParticipants MaxParticipants')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         if (!group) {
             return res.status(404).json({
@@ -97,14 +101,13 @@ exports.createGroup = async (req, res, next) => {
             });
         }
 
-        // GroupLeaderID is not in the schema, skipping assignment
-
-        req.body.ModifiedBy = req.user._id;
+        // No authentication required for public registration
+        
         const group = await Groups.create(req.body);
 
         const populatedGroup = await Groups.findById(group._id)
             .populate('EventID', 'EventName DepartmentID EventDate EventTime')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(201).json({
             success: true,
@@ -166,7 +169,7 @@ exports.updateGroup = async (req, res, next) => {
             runValidators: true
         })
             .populate('EventID', 'EventName DepartmentID EventDate EventTime')
-            .populate('ModifiedBy', 'name email');
+            .populate('ModifiedBy', 'UserName EmailAddress');
 
         res.status(200).json({
             success: true,
@@ -217,7 +220,7 @@ exports.getGroupsByEvent = async (req, res, next) => {
     try {
         const groups = await Groups.find({ EventID: req.params.id })
             .populate('EventID', 'EventName DepartmentID EventDate EventTime')
-            .populate('ModifiedBy', 'name email')
+            .populate('ModifiedBy', 'UserName EmailAddress')
             .sort({ createdAt: -1 });
 
         res.status(200).json({

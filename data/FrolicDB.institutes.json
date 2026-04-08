@@ -1,0 +1,192 @@
+[{
+  "_id": {
+    "$oid": "69c4d392179eca6c9c702c60"
+  },
+  "InstituteName": "ABC",
+  "InsituteImage": "uploads/1774506914919-Screenshot 2026-03-23 220741.png",
+  "InsituteDescription": "as",
+  "InsituteCoOrdinatorID": {
+    "$oid": "69c4089ba0d266812c62ad29"
+  },
+  "ModifiedBy": {
+    "$oid": "69998ecd9576e376726a2b0a"
+  },
+  "createdAt": {
+    "$date": "2026-03-26T06:34:58.136Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-26T06:35:14.923Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efb8"
+  },
+  "InstituteName": "Global Arts Academy",
+  "InsituteDescription": "Specializing in visual arts and narrative storytelling.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d1"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efb9"
+  },
+  "InstituteName": "Tech Pulse Institute",
+  "InsituteDescription": "Focusing on digital innovation and tech events.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d2"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efba"
+  },
+  "InstituteName": "Harmony School of Music",
+  "InsituteDescription": "A hub for classical and modern musical performances.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d3"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efbc"
+  },
+  "InstituteName": "Elite Sports Academy",
+  "InsituteDescription": "Organizing regional and national level sports meets.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d5"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efbd"
+  },
+  "InstituteName": "Heritage Cultural Center",
+  "InsituteDescription": "Preserving tradition through folk dance and craft fairs.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d6"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efbe"
+  },
+  "InstituteName": "Starlight Drama Club",
+  "InsituteDescription": "Theater productions and performing arts workshops.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d7"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efbf"
+  },
+  "InstituteName": "Oceanic Science Hub",
+  "InsituteDescription": "Marine biology exhibitions and environmental summits.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d8"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc0"
+  },
+  "InstituteName": "Vogue Fashion House",
+  "InsituteDescription": "High-end fashion shows and design competitions.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c0d9"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc1"
+  },
+  "InstituteName": "Gourmet Culinary Arts",
+  "InsituteDescription": "Food festivals and professional cooking challenges.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d0"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc2"
+  },
+  "InstituteName": "Zenith Robotics Lab",
+  "InsituteDescription": "AI conventions and robotics battle events.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d1"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc3"
+  },
+  "InstituteName": "Pioneer Engineering College",
+  "InsituteDescription": "Technical symposiums and hackathons.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d2"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc4"
+  },
+  "InstituteName": "Liberty Law Chambers",
+  "InsituteDescription": "Moot court competitions and legal webinars.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d3"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc5"
+  },
+  "InstituteName": "Eco-Green Foundation",
+  "InsituteDescription": "Sustainability workshops and tree plantation drives.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d4"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc6"
+  },
+  "InstituteName": "Modern Cinema Institute",
+  "InsituteDescription": "Film screenings and cinematography masterclasses.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d5"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc7"
+  },
+  "InstituteName": "Silver Age Care Center",
+  "InsituteDescription": "Community events for seniors and wellness health camps.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d6"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc8"
+  },
+  "InstituteName": "Aurora Language School",
+  "InsituteDescription": "International cultural exchange and debate meets.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d7"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efc9"
+  },
+  "InstituteName": "Delta Aviation Academy",
+  "InsituteDescription": "Aerospace exhibitions and career counseling.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d8"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efca"
+  },
+  "InstituteName": "Nova Dance Studio",
+  "InsituteDescription": "Choreography festivals and hip-hop battles.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c1d9"
+},
+{
+  "_id": {
+    "$oid": "69c4d774191ce78e9e74efcb"
+  },
+  "InstituteName": "Radiant Wellness Yoga",
+  "InsituteDescription": "Yoga retreats and mental health awareness events.",
+  "InsituteImage": "uploads/default.png",
+  "InsituteCoOrdinatorID": "65f1a2b3c4d5e6f7a8b9c2d0"
+}]
