@@ -56,6 +56,28 @@ body {
 
 .avatar { width: 40px; height: 40px; border-radius: 50%; }
 
+/* Clickable stat cards */
+.clickable-stat-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.clickable-stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.clickable-stat-card .stat-data small {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 0.75rem;
+}
+
+.clickable-stat-card:hover .stat-data small {
+  opacity: 1;
+}
+
 .stat-card-premium {
     background: var(--white);
     padding: 25px;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar"; 
 import Navbar from "../components/Navbar";
 import API from "../services/api";
@@ -46,39 +47,48 @@ function Dashboard() {
         <div className="container-fluid pt-2">
           <div className="row g-4">
             <div className="col-md-4">
-              <div className="stat-card-premium shadow-sm">
-                <div className="stat-icon bg-primary-soft">
-                  <i className="fas fa-university text-primary"></i>
+              <Link to="/admin/institutes" className="text-decoration-none">
+                <div className="stat-card-premium shadow-sm clickable-stat-card">
+                  <div className="stat-icon bg-primary-soft">
+                    <i className="fas fa-university text-primary"></i>
+                  </div>
+                  <div className="stat-data">
+                    <h5>{loading ? "..." : stats.institutes}</h5>
+                    <p>Total Institutes</p>
+                    <small className="text-muted">Click to view →</small>
+                  </div>
                 </div>
-                <div className="stat-data">
-                  <h5>{loading ? "..." : stats.institutes}</h5>
-                  <p>Total Institutes</p>
-                </div>
-              </div>
+              </Link>
             </div>
 
             <div className="col-md-4">
-              <div className="stat-card-premium shadow-sm">
-                <div className="stat-icon bg-success-soft">
-                  <i className="fas fa-calendar-check text-success"></i>
+              <Link to="/admin/events" className="text-decoration-none">
+                <div className="stat-card-premium shadow-sm clickable-stat-card">
+                  <div className="stat-icon bg-success-soft">
+                    <i className="fas fa-calendar-check text-success"></i>
+                  </div>
+                  <div className="stat-data">
+                    <h5>{loading ? "..." : stats.events}</h5>
+                    <p>Active Events</p>
+                    <small className="text-muted">Click to view →</small>
+                  </div>
                 </div>
-                <div className="stat-data">
-                  <h5>{loading ? "..." : stats.events}</h5>
-                  <p>Active Events</p>
-                </div>
-              </div>
+              </Link>
             </div>
 
             <div className="col-md-4">
-              <div className="stat-card-premium shadow-sm">
-                <div className="stat-icon bg-warning-soft">
-                  <i className="fas fa-users text-warning"></i>
+           <Link to="/admin/participants" className="text-decoration-none">
+                <div className="stat-card-premium shadow-sm clickable-stat-card">
+                  <div className="stat-icon bg-warning-soft">
+                    <i className="fas fa-users text-warning"></i>
+                  </div>
+                  <div className="stat-data">
+                    <h5>{loading ? "..." : stats.participants}</h5>
+                    <p>Participants</p>
+                    <small className="text-muted">Click to view →</small>
+                  </div>
                 </div>
-                <div className="stat-data">
-                  <h5>{loading ? "..." : stats.participants}</h5>
-                  <p>Participants</p>
-                </div>
-              </div>
+              </Link>
             </div>
           </div>
           
