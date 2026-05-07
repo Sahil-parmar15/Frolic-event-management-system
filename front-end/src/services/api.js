@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const BASE_URL = "https://frolic-event-management-system.onrender.com/";
+export const BASE_URL = "https://frolic-event-management-system.onrender.com";
 
 const API = axios.create({
   baseURL: `${BASE_URL}/api`,
