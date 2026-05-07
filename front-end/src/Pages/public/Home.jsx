@@ -60,7 +60,7 @@ function Home() {
       </section>
 
       {/* Stats Ribbon */}
-      <section className="py-5 bg-dark text-white position-relative">
+      <section className="py-5 bg-white text-white position-relative">
         <div className="container">
           <div className="row g-4 text-center">
             <div className="col-12 col-md-4">

@@ -96,15 +96,6 @@ const handleLogin = async (e) => {
                     SIGN IN
                   </button>
                 </form>
-
-                <div className="mt-4 text-center">
-                  <p className="small mb-0">
-                    Don't have an account?{" "}
-                    <a href="#" className="fw-bold">
-                      Register
-                    </a>
-                  </p>
-                </div>
               </div>
             </div>
           </div>
